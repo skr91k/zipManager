@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:zipManager}",
+            "name": "Debug ZipManager",
+            "target": "ZipManager",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug ZipManager"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:zipManager}",
+            "name": "Release ZipManager",
+            "target": "ZipManager",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release ZipManager"
+        }
+    ]
+}
