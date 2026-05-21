@@ -124,10 +124,14 @@
         </dict>
     </array>
 
-    <!-- Required for sandboxed app: read/write access -->
-    <key>com.apple.security.app-sandbox</key>
-    <false/>
-    <key>com.apple.security.files.user-selected.read-write</key>
-    <true/>
+    <!-- Privacy usage descriptions — macOS asks once, then remembers -->
+    <key>NSDesktopFolderUsageDescription</key>
+    <string>ZipManager needs access to browse and compress files on your Desktop.</string>
+    <key>NSDocumentsFolderUsageDescription</key>
+    <string>ZipManager needs access to browse and compress files in your Documents folder.</string>
+    <key>NSDownloadsFolderUsageDescription</key>
+    <string>ZipManager needs access to browse and compress files in your Downloads folder.</string>
+    <key>NSFileProviderDomainUsageDescription</key>
+    <string>ZipManager needs access to browse files.</string>
 </dict>
 </plist>
