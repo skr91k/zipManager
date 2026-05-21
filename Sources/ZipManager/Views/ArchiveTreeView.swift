@@ -49,6 +49,7 @@ struct ArchiveTreeView: View {
                     set: { appState.selectedEntry = $0 }
                 )) { entry in
                     ArchiveEntryRow(entry: entry)
+                        .onTapGesture { appState.selectedEntry = entry }
                         .contextMenu { entryContextMenu(entry) }
                 }
                 .listStyle(.sidebar)
@@ -59,6 +60,7 @@ struct ArchiveTreeView: View {
                     set: { appState.selectedEntry = $0 }
                 )) { entry in
                     ArchiveEntryRow(entry: entry)
+                        .onTapGesture { appState.selectedEntry = entry }
                         .contextMenu { entryContextMenu(entry) }
                 }
                 .listStyle(.sidebar)

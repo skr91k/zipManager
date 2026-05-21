@@ -89,7 +89,7 @@ struct FileBrowserView: View {
             }
         )) { item in
             FSItemRow(item: item)
-                .onTapGesture(count: 2) { handleDoubleClick(item) }
+                .onTapGesture { handleDoubleClick(item) }
                 .contextMenu { contextMenu(for: item) }
         }
         .listStyle(.sidebar)
