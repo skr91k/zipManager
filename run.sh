@@ -32,8 +32,9 @@ if [ "$CURR_HASH" != "$PREV_HASH" ] || [ ! -d "$APP" ]; then
   echo "Installing to $APP..."
   rm -rf "$APP"
   mkdir -p "$CONTENTS/MacOS" "$CONTENTS/Resources"
-  cp "$BINARY"              "$CONTENTS/MacOS/$APP_NAME"
-  cp "Resources/Info.plist" "$CONTENTS/"
+  cp "$BINARY"                    "$CONTENTS/MacOS/$APP_NAME"
+  cp "Resources/Info.plist"       "$CONTENTS/"
+  cp "Resources/AppIcon.icns"     "$CONTENTS/Resources/"
   codesign --force --deep --sign - \
     --entitlements "ZipManager.entitlements" \
     "$APP"

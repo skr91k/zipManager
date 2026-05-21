@@ -10,7 +10,9 @@
       "Bash(gh repo *)",
       "Bash(git push *)",
       "Bash(bash /Users/shakir/zipManager/run.sh)",
-      "Bash(codesign -d --entitlements - ~/Applications/ZipManager.app)"
+      "Bash(codesign -d --entitlements - ~/Applications/ZipManager.app)",
+      "Bash(bash /Users/shakir/zipManager/run.sh p)",
+      "Bash(iconutil -c icns /Users/shakir/zipManager/Resources/AppIcon.iconset -o /Users/shakir/zipManager/Resources/AppIcon.icns)"
     ]
   }
 }
