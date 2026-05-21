@@ -1,6 +1,8 @@
 import Foundation
 
-final class FSItem: Identifiable, ObservableObject {
+final class FSItem: Identifiable, ObservableObject, Equatable {
+    static func == (lhs: FSItem, rhs: FSItem) -> Bool { lhs.url == rhs.url }
+
     let url: URL
     var id: URL { url }
     var name: String { url.lastPathComponent.isEmpty ? url.path : url.lastPathComponent }

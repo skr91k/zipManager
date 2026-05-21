@@ -89,10 +89,14 @@ struct FileBrowserView: View {
             }
         )) { item in
             FSItemRow(item: item)
-                .onTapGesture { handleDoubleClick(item) }
                 .contextMenu { contextMenu(for: item) }
         }
         .listStyle(.sidebar)
+        // Single click → selection changes → run primary action immediately
+        .onChange(of: selectedItem) { _, item in
+            guard let item else { return }
+            handlePrimaryAction(item)
+        }
         .overlay {
             if isLoading {
                 ProgressView()
@@ -159,11 +163,13 @@ struct FileBrowserView: View {
 
     // MARK: - Actions
 
-    private func handleDoubleClick(_ item: FSItem) {
+    private func handlePrimaryAction(_ item: FSItem) {
         if item.isArchive {
             Task { await appState.loadArchive(url: item.url) }
         } else if item.isDirectory && !item.isPackage {
             navigate(to: item.url, addToHistory: true)
+            // Clear selection after navigating so the new directory starts unselected
+            selectedItem = nil
         } else {
             NSWorkspace.shared.open(item.url)
         }
