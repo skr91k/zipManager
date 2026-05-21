@@ -3,42 +3,67 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-echo "Building ZipManager..."
-swift build
+PACKAGE_MODE=false
+[ "${1:-}" = "p" ] && PACKAGE_MODE=true
 
-BINARY=".build/debug/ZipManager"
-# Stable install path — TCC remembers permissions per bundle path + identifier
+APP_NAME="ZipManager"
 APPS="$HOME/Applications"
-APP="$APPS/ZipManager.app"
+APP="$APPS/$APP_NAME.app"
 CONTENTS="$APP/Contents"
 
-mkdir -p "$APPS"
+# ── Build ──────────────────────────────────────────────────────────────────────
+if $PACKAGE_MODE; then
+  echo "Building $APP_NAME (release)..."
+  swift build -c release
+  BINARY=".build/release/$APP_NAME"
+else
+  echo "Building $APP_NAME..."
+  swift build
+  BINARY=".build/debug/$APP_NAME"
+fi
 
-# Only rebuild bundle when binary actually changed (keeps TCC identity stable)
-PREV_HASH=""
+# ── Assemble .app bundle (only when binary changed) ────────────────────────────
+mkdir -p "$APPS"
 CURR_HASH=$(md5 -q "$BINARY")
 HASH_FILE=".build/.zipmanager_binary_hash"
-[ -f "$HASH_FILE" ] && PREV_HASH=$(cat "$HASH_FILE")
+PREV_HASH=""; [ -f "$HASH_FILE" ] && PREV_HASH=$(cat "$HASH_FILE")
 
 if [ "$CURR_HASH" != "$PREV_HASH" ] || [ ! -d "$APP" ]; then
   echo "Installing to $APP..."
   rm -rf "$APP"
   mkdir -p "$CONTENTS/MacOS" "$CONTENTS/Resources"
-  cp "$BINARY"              "$CONTENTS/MacOS/ZipManager"
+  cp "$BINARY"              "$CONTENTS/MacOS/$APP_NAME"
   cp "Resources/Info.plist" "$CONTENTS/"
-
-  # Sign with entitlements — disables sandbox so no per-click prompts
   codesign --force --deep --sign - \
     --entitlements "ZipManager.entitlements" \
     "$APP"
-
   echo "$CURR_HASH" > "$HASH_FILE"
-  echo "Installed."
 fi
 
-echo "Launching ZipManager..."
-if [ $# -gt 0 ]; then
-  open "$APP" --args "$@"
+# ── Package → DMG ─────────────────────────────────────────────────────────────
+if $PACKAGE_MODE; then
+  DMG_PATH="$(pwd)/$APP_NAME.dmg"
+  STAGING=$(mktemp -d)
+  trap 'rm -rf "$STAGING"' EXIT
+
+  echo "Creating DMG..."
+  cp -r "$APP" "$STAGING/"
+  ln -s /Applications "$STAGING/Applications"
+
+  rm -f "$DMG_PATH"
+  hdiutil create \
+    -volname "$APP_NAME" \
+    -srcfolder "$STAGING" \
+    -ov \
+    -format UDZO \
+    -quiet \
+    "$DMG_PATH"
+
+  echo "Done → $DMG_PATH"
+  open "$DMG_PATH"
+
+# ── Dev run ───────────────────────────────────────────────────────────────────
 else
+  echo "Launching $APP_NAME..."
   open -a "$APP"
 fi
